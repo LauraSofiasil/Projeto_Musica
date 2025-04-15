@@ -36,8 +36,9 @@ const bodyParserJSON = bodyParser.json()
 const app = express()
 
 //Import das Controllers do projeto
-const controllerMusicas = require('./controller/musica/controllerMusica')
-const controllerGravadora = require('./controller/gravadora/controllerGravadora')
+const controllerMusicas = require('./controller/musica/controllerMusica.js')
+const controllerGravadora = require('./controller/gravadora/controllerGravadora.js')
+const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
 
 //Consgurações de permições do cors para API
 app.use((request, response, next)=>{
@@ -172,6 +173,20 @@ app.put('/v1/controle-musicas/atualizar-gravadora/:id', cors(), bodyParserJSON, 
 
     response.status(resultGravadora.status_code)
     response.json(resultGravadora)
+})
+
+//ENDPOINT para inserir um novo usuario
+app.post('/v1/controle-musicas/usuario', cors(), bodyParserJSON, async function(request, response){
+    
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    //Chama a função da Controller para iserir os dados e aguarda retorno da função
+    let resultUsuario = await controllerUsuario.inserirUsuario(dadosBody, contentType)
+
+    response.status(resultUsuario.status_code)
+    response.json(resultUsuario)
 })
 
 
