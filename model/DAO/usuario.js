@@ -11,7 +11,7 @@ const prisma = new PrismaClient()
 
 const insertUsuario = async function(usuario){
     try {
-        let sql = `insert into tbl_usuario ( nome, 
+        let sql = `insert into tbl_usuario (nome, 
                                             data_nascimento, 
                                             email,
                                             senha)
@@ -33,26 +33,87 @@ const insertUsuario = async function(usuario){
     }
 }
 
-const updateUsuario = async function(){
+const updateUsuario = async function(usuario){
 
+    try {
+        
+        let sql = `update tbl_usuario set nome       = '${usuario.nome}',
+                                          data_nascimento = '${usuario.data_nascimento}',
+                                          email           = '${usuario.email}',
+                                          senha           = '${usuario.senha}'
+                                        where id_usuario = ${usuario.id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        if(result)
+            return true
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
 }
 
-const deleteUsuario = async function(){
+const deleteUsuario = async function(id){
 
+    try {
+        
+        let sql = `delete from tbl_usuario where id_usuario=${id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        if(result)
+            return true
+        else 
+            return false
+
+    } catch (error) {
+        return false
+    }
 }
 
+//Função para retornar todos os usuários
 const selectAllUsuario = async function(){
+    try {
+        //Script SQL
+        let sql = 'select * from tbl_usuario order by id_usuario desc'
 
+        //Encaminha o script SQL para o banco de dados
+        let result = await prisma.$queryRawUnsafe(sql)   //O query volta os dados
+
+        if(result)
+            return result  //Retorna os dados do banco
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
 }
 
-const selectByIdUsuario = async function(){
+const selectByIdUsuario = async function(id){
 
+    try {
+        
+        let sql = `select * from tbl_usuario where id_usuario=${id}`
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result)
+            return result
+        else
+            return false
+
+    } catch (error) {
+        return false
+    }
 }
 
 module.exports = {
-    insertUsuario,
-    updateUsuario,
-    deleteUsuario,
-    selectAllUsuario,
-    selectByIdUsuario
+    insertUsuario, //OK
+    updateUsuario,  //OK
+    deleteUsuario,  //OK
+    selectAllUsuario,  //OK
+    selectByIdUsuario  //OK
 }
