@@ -28,12 +28,13 @@ const insertTipoArtista = async function(tipoArtista){
 }
 
 //Função para atualizar um gênero existente
-const updateGenero = async function(genero){
+const updateTipoArtista = async function(tipoArtista){
     try {
-        
-        let sql = `update tbl_genero set tipo = '${genero.tipo}' where id_tipo_artista = ${genero.id}`
+            
+        let sql = `update tbl_tipo_artista set tipo = '${tipoArtista.tipo}'
+                                        where id_tipo_artista = ${tipoArtista.id}`
 
-        let result = await prisma.$executeRawUnsafe(sql)  
+        let result = await prisma.$executeRawUnsafe(sql) //Apenas executa
 
         if(result)
             return true
@@ -41,16 +42,15 @@ const updateGenero = async function(genero){
             return false
 
     } catch (error) {
-        
+        return false
     }
-    
 }
 
 //Função para excluir um gênero existente
-const deleteGenero = async function(id){
+const deleteTipoArtista = async function(id){
     try {
         
-        let sql = `delete from tbl_genero where id_genero=${id}`
+        let sql = `delete from tbl_tipo_artista where id_tipo_artista=${id}`
         
         let result = await prisma.$executeRawUnsafe(sql) 
 
@@ -65,10 +65,10 @@ const deleteGenero = async function(id){
 }
 
 //Função para retornar todas os gêneros do Banco de dados
-const selectAllGenero = async function(){
+const selectAllTipoArtista = async function(){
     try {
         
-        let sql = 'select * from tbl_genero order by id_genero desc'
+        let sql = 'select * from tbl_tipo_artista order by id_tipo_artista desc'
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -82,11 +82,11 @@ const selectAllGenero = async function(){
     }
 }
 
-//Função para buscar um gênero pelo id
-const selectByIdGenero = async function(id){
+//Função para buscar um tipo de artista pelo id
+const selectByIdTipoArtista = async function(id){
     try {
         
-        let sql = `select * from tbl_genero where id_genero=${id}`
+        let sql = `select * from tbl_tipo_artista where id_tipo_artista=${id}`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -102,5 +102,10 @@ const selectByIdGenero = async function(id){
 
 
 module.exports = {
-    insertTipoArtista
+    insertTipoArtista, //Ok
+    selectAllTipoArtista, //Ok
+    selectByIdTipoArtista, //Ok
+    deleteTipoArtista, //Ok
+    updateTipoArtista //Ok
+
 }

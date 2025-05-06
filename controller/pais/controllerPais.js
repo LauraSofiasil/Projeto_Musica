@@ -10,26 +10,22 @@
 const message = require('../../modulo/config.js')
 
 //import do DAO para realizar o CRUD no Banco de dados
-const musicaDAO = require('../../model/DAO/musica.js')
+const paisDAO = require('../../model/DAO/pais.js')
 
 //Função para inserir uma nova música
-const inserirMusica = async function(musica, contentType){
+const inserirPais = async function(pais, contentType){
     try {
         if(String(contentType).toLowerCase() == 'application/json')
         {
-            if( musica.nome            == '' || musica.nome             == null || musica.nome           == undefined || musica.nome.length            > 100 || 
-                musica.data_lancamento == '' || musica.data_lancamento == null || musica.data_lancamento == undefined || musica.data_lancamento.length > 10  || 
-                musica.duracao         == '' || musica.duracao         == null || musica.duracao         == undefined || musica.duracao.length         > 8   ||
-                musica.link     == undefined || musica.link.length       > 300 ||
-                musica.letra    == undefined 
+            if( pais.pais == '' || pais.pais == null || pais.pais == undefined || pais.pais.length > 100 
             )
             {
                 return message.ERROR_REQUIRED_FIELDS //status code 400
             }else{
                 //Encaminhando os dados da música para o DAO realizar o insert no Banco de dados
-                let resultMusica = await musicaDAO.insertMusica(musica)
+                let resultPais = await paisDAO.insertPais(pais)
 
-                if(resultMusica)
+                if(resultPais)
                     return message.SUCESS_CREATED_ITEM //status code 201
                 else{
                     return message.ERROR_INTERNAL_SERVER_MODEL //status code 500
@@ -45,18 +41,14 @@ const inserirMusica = async function(musica, contentType){
 }
 
 //Função para atualizar uma música
-const atualizarMusica = async function(id, musica, contentType){
+const atualizarPais = async function(id, pais, contentType){
     try {
         
         //Copiamos o início do código do inserirMusica
         if(String(contentType).toLowerCase() == 'application/json')
             {
-                if( musica.nome            == '' || musica.nome             == null || musica.nome            == undefined || musica.nome.length            > 100 || 
-                    musica.data_lancamento == '' || musica.data_lancamento == null  || musica.data_lancamento == undefined || musica.data_lancamento.length > 10  || 
-                    musica.duracao         == '' || musica.duracao         == null  || musica.duracao         == undefined || musica.duracao.length         > 8   ||
-                    musica.link     == undefined || musica.link.length       > 300  ||                                     
-                    musica.letra    == undefined ||                                                                        
-                    id                     == '' || id                     == null  || id                     == undefined || isNaN(id)
+                if( pais.pais == '' || pais.pais == null || pais.pais == undefined || pais.pais.length > 100 || 
+                    id        == '' || id        == null  || id       == undefined || isNaN(id)
                 )
                 {
                     return message.ERROR_REQUIRED_FIELDS //status code 400
@@ -64,16 +56,16 @@ const atualizarMusica = async function(id, musica, contentType){
                 }else{ //Copiamos só até aqu - até essa linha
 
                     //Verifica se o ID existe no Banco de Dados
-                    let result = await musicaDAO.selectByIdMusica(id)
+                    let result = await paisDAO.selectByIdPais(id)
 
                     if(result != false || typeof(result) == 'object'){
                         if(result.length > 0){
                             
                             //Update
-                            musica.id = id //Adiciona o atributo do ID no JSON -> (musica) com os dados recebidos no corpo da requisição
-                            let resultMusica = await musicaDAO.updateMusica(musica) 
+                            pais.id_pais = id //Adiciona o atributo do ID no JSON -> (musica) com os dados recebidos no corpo da requisição
+                            let resultPais = await paisDAO.updatePais(pais) 
 
-                            if(resultMusica){
+                            if(resultPais){
                                 return message.SUCESS_UPDATE_ITEM //status code 200
                             }else{
                                 return message.ERROR_INTERNAL_SERVER_MODEL //status code 500
@@ -95,22 +87,20 @@ const atualizarMusica = async function(id, musica, contentType){
 }
 
 //Função para excluir uma música
-const excluirMusica = async function(numero){
+const excluirPais = async function(id){
     try{
-        let id = numero
-
         if(id == '' || id == null || id == undefined || isNaN(id)){
             return message.ERROR_REQUIRED_FIELDS  //status code 400
         }else{
             
             //Antes de excluir, estamos verificando se existe esse id
-            let resultMusica = await musicaDAO.selectByIdMusica(id)
+            let resultPais = await paisDAO.selectByIdPais(id)
 
-            if(resultMusica != false || typeof(resultMusica) =='object'){
+            if(resultPais != false || typeof(resultPais) =='object'){
                 
-                if(resultMusica.length > 0){
+                if(resultPais.length > 0){
                     //delete
-                    let result = await musicaDAO.deleteMusica(id)
+                    let result = await paisDAO.deletePais(id)
 
                     if(result)
                         return message.SUCESS_DELETE_ITEM  //status code 200
@@ -132,24 +122,24 @@ const excluirMusica = async function(numero){
 }
 
 //Função para retornar uma lista de músicas
-const listarMusica = async function(){
+const listarPais = async function(){
     try {
 
         //Objet JSON
-        let dadosMusica = {}
+        let dadosPais = {}
 
         //Chama a função para retornar as músicas do banco de dados
-        let resultMusica = await musicaDAO.selectAllMusica()
+        let resultPais = await paisDAO.selectAllPais()
 
-        if(resultMusica != false){
-            if(resultMusica.length > 0 || typeof(resultMusica) == 'object'){
+        if(resultPais != false){
+            if(resultPais.length > 0 || typeof(resultPais) == 'object'){
                 //Cria um json para colocar o array de músicas
-                dadosMusica.status = true,
-                dadosMusica.status_code = 200,
-                dadosMusica.items = resultMusica.length,
-                dadosMusica.musics = resultMusica
+                dadosPais.status = true,
+                dadosPais.status_code = 200,
+                dadosPais.items = resultPais.length,
+                dadosPais.paises = resultPais
                 
-                return dadosMusica
+                return dadosPais
 
             }else{
                 return message.ERROR_NOT_FOUND //status code 404
@@ -164,27 +154,25 @@ const listarMusica = async function(){
 }
 
 //Função para retornar uma música pelo ID
-const buscarMusica = async function(numero){
+const buscarPais = async function(id){
     try{
-        let id = numero
-
         //Objeto JSON
-        let dadosMusica = {}
+        let dadosPais = {}
 
         if(id == '' || id == null || id == undefined || isNaN(id)){
             return message.ERROR_REQUIRED_FIELDS //status code 400
         }else{
 
-            let resultMusica = await musicaDAO.selectByIdMusica(id)
+            let resultPais = await paisDAO.selectByIdPais(id)
                     
-            if(resultMusica != false || typeof(resultMusica) == 'object'){
-                if(resultMusica.length > 0){
+            if(resultPais != false || typeof(resultPais) == 'object'){
+                if(resultPais.length > 0){
                     //Cria um json para colocar o array de músicas
-                    dadosMusica.status = true,
-                    dadosMusica.status_code = 200,
-                    dadosMusica.musics = resultMusica
+                    dadosPais.status = true,
+                    dadosPais.status_code = 200,
+                    dadosPais.paises = resultPais
                     
-                    return dadosMusica
+                    return dadosPais
 
                 }else{
                     return message.ERROR_NOT_FOUND //status code 404
@@ -199,9 +187,9 @@ const buscarMusica = async function(numero){
 }
 
 module.exports = {
-    inserirMusica,   //Está tudo ok
-    atualizarMusica, //Está tudo ok
-    excluirMusica,   //Está tudo ok
-    listarMusica,    //Está tudo ok
-    buscarMusica     //Está tudo ok
+    inserirPais,   //Está tudo ok
+    atualizarPais, //Está tudo ok
+    excluirPais,   //Está tudo ok
+    listarPais,    //Está tudo ok
+    buscarPais     //Está tudo ok
 }
