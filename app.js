@@ -43,6 +43,7 @@ const controllerGenero = require('./controller/genero/controllerGenero.js')
 const controllerTipoArtista = require('./controller/tipoArtista/controllerTipoArtista.js')
 const controllerTipoAlbum = require('./controller/tipoAlbum/controllerTipoAlbum.js')
 const controllerPais = require('./controller/pais/controllerPais.js')
+const controllerEstado = require('./controller/estado/controllerEstado.js')
 
 
 //Consgurações de permições do cors para API
@@ -485,6 +486,71 @@ app.put('/v1/controle-musicas/pais/:id', cors(), bodyParserJSON, async function(
     response.json(resultPais)
     
 })
+
+//ENDPOINT para inserir um novo estado
+app.post('/v1/controle-musicas/estado', cors(), bodyParserJSON, async function(request, response){
+    
+    let contentType = request.headers['content-type']
+
+    let bodyDados = request.body
+
+    let resultEstado = await controllerEstado.inserirEstado(bodyDados, contentType)
+
+    response.status(resultEstado.status_code)
+    response.json(resultEstado)
+})
+
+//ENDPOINT para listar todos os estados
+app.get('/v1/controle-musicas/estado', cors(), async function(request, response){
+    
+    let resultEstado = await controllerEstado.listarEstados()
+    
+    response.status(resultEstado.status_code)
+    response.json(resultEstado)
+})
+
+//ENDPOINT para buscar um estado pelo id
+app.get('/v1/controle-musicas/estado/:id', cors(), async function(request, response){
+
+    let idEstado = request.params.id
+
+    let resultEstado = await controllerEstado.buscarEstado(idEstado)
+
+    response.status(resultEstado.status_code)
+    response.json(resultEstado)
+})
+
+//ENDPOINT para excluir um estado pelo id
+app.delete('/v1/controle-musicas/estado/:id', cors(), async function(request, response){
+
+    let idEstado = request.params.id
+
+    let resultEstado = await controllerEstado.excluirEstado(idEstado)
+
+    response.status(resultEstado.status_code)
+    response.json(resultEstado)
+})
+
+//ENDPOINT para atualizar um estado
+app.put('/v1/controle-musicas/estado/:id', cors(), bodyParserJSON, async function(request, response){
+
+    //Recebe o content=type da requisição
+    let contentType = request.headers['content-type']
+
+    //Recebe o ID da música
+    let idEstado = request.params.id
+
+    //Recebe os dados da requisição
+    let dadosBody = request.body
+
+    //Chama a função e encaminha os argumentos: ID, Body e Content-Type
+    let resultEstado = await controllerEstado.atualizarEstado(idEstado, dadosBody, contentType)
+
+    response.status(resultEstado.status_code)
+    response.json(resultEstado)
+    
+})
+
 
 app.listen(8080, function(){
     console.log('API funcionando e aguardando requisições...')
